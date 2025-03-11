@@ -1,0 +1,6 @@
+@GrowthLMS.API_HostAddress = http://localhost:5279
+
+GET {{GrowthLMS.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
