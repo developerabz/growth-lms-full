@@ -5,6 +5,8 @@ import { useForm, useFieldArray} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { XCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { API_ENDPOINTS } from '@/config/api';
 
 // Define user types
 type UserType = 'adultStudent' | 'childStudent' | 'parent';
@@ -43,6 +45,8 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
   const [selectedTypes, setSelectedTypes] = useState<UserType[]>([]);
+  const router = useRouter();
+  const [error, setError] = useState('');
   
   const {
     register,
@@ -61,10 +65,28 @@ export default function RegisterPage() {
     name: 'childEmails',
   });
 
+  const onSubmit = async (data: RegisterFormData) => {
+    setError('');
 
-  const onSubmit = (data: RegisterFormData) => {
-    console.log(data);
-    // Handle form submission
+    try {
+      const response = await fetch(API_ENDPOINTS.register, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Registration failed');
+      }
+
+      // Registration successful
+      router.push('/login'); // Redirect to login page
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred during registration');
+    }
   };
 
   const handleUserTypeChange = (type: UserType) => {
@@ -96,6 +118,7 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-6">
+          {error && <div className="error-message">{error}</div>}
           {/* Full Name */}
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">

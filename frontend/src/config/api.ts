@@ -1,0 +1,9 @@
+export const API_BASE_URL = process.env.NODE_ENV === 'development' 
+  ? 'http://localhost:5279'  // Use HTTP in development to avoid certificate issues
+  : 'https://localhost:7279'; // Use HTTPS in production
+
+export const API_ENDPOINTS = {
+  register: '/api/users/register',
+  login: '/api/users/login',
+  // Add other endpoints as needed
+}; 
