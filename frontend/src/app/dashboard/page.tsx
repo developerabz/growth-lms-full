@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Search, Edit2, X } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import CourseCard from '@/components/CourseCard';
 import NotificationCard from '@/components/NotificationCard';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { useRouter } from 'next/navigation';
+import { User } from '@/config/customtypes';
 
 // Define section types
 type SectionType = 'enrolled' | 'completed' | 'notifications' | 'all';
@@ -58,11 +60,30 @@ export default function Dashboard() {
   const [isEditing, setIsEditing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sections, setSections] = useState<Section[]>(DEFAULT_SECTIONS);
+  const [user, setUser] = useState<User>({
+    userId: '',
+    email: '',
+    name: '',
+    userTypes: [],
+    courseIds: [],
+  });
 
   const allCourses = [...mockEnrolledCourses, ...mockCompletedCourses];
   const filteredCourses = allCourses.filter(course =>
     course.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  const router = useRouter();
+
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('token') !== null;
+    if (!isLoggedIn) {
+      router.push('/login');
+    } else {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      setUser(user);
+    }
+  }, []);
 
   // Add reset handler
   const handleReset = () => {
@@ -176,7 +197,7 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-primary-light dark:text-white">
-            Welcome back, Student!
+            Welcome back, {user.name}!
           </h1>
           <p className="text-gray-600 dark:text-gray-300 mt-2">
             Track your progress and stay updated with your courses

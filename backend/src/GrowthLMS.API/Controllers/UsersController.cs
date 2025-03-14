@@ -145,6 +145,40 @@ namespace GrowthLMS.API.Controllers
             }
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(UserLoginDto login)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserByEmailAsync(login.Email);
+                if (user == null)
+                {
+                    return Unauthorized(new { message = "Invalid email or password" });
+                }
+
+                var passwordHash = HashPassword(login.Password, Convert.FromBase64String(user.Salt));
+                if (!user.Hash.Equals(Convert.ToBase64String(passwordHash)))
+                {
+                    return Unauthorized(new { message = "Invalid email or password" });
+                }
+
+                return Ok(new { message = "Login successful", token = GenerateSalt() });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during user login for email: {Email}", login.Email);
+                return StatusCode(500, new { 
+                    message = "An error occurred while logging in", 
+                    error = ex.Message,
+                    stackTrace = ex.StackTrace
+                });
+            }
+        }   
+        
+        
+        
+
+
         [HttpGet("by-email/{email}")]
         public async Task<IActionResult> GetUserByEmail(string email)
         {

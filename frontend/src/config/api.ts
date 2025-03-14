@@ -5,5 +5,6 @@ export const API_BASE_URL = process.env.NODE_ENV === 'development'
 export const API_ENDPOINTS = {
   register: '/api/users/register',
   login: '/api/users/login',
+  getUser: (email: string) => `/api/users/by-email/${email}`,
   // Add other endpoints as needed
 }; 

@@ -4,6 +4,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
+import { API_ENDPOINTS } from '@/config/api';
+import { useRouter } from 'next/navigation';
+import { User } from '@/config/customtypes';
 
 // Zod schema for form validation
 const loginSchema = z.object({
@@ -22,9 +25,38 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log(data);
-    // Handle login submission
+  const router = useRouter();
+
+  const onSubmit = async (data: LoginFormData) => {
+    const response = await fetch(API_ENDPOINTS.login, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Login failed');
+    }
+    const res = await response.json();
+    // console.log(res);
+    localStorage.setItem('token', res.token);
+
+    const userResponse = await fetch(API_ENDPOINTS.getUser(data.email));
+    if (!userResponse.ok) {
+      throw new Error('Failed to fetch user');
+    }
+    const user = await userResponse.json();
+    const resUser: User = {
+      userId: user.userId,
+      email: user.email,
+      name: user.name,
+      userTypes: user.userTypes,
+      courseIds: user.courseIds,
+    };
+    localStorage.setItem('user', JSON.stringify(resUser));
+    router.push('/dashboard');
   };
 
   return (
