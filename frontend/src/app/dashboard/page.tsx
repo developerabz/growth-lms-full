@@ -195,13 +195,20 @@ export default function Dashboard() {
     <div className="min-h-screen bg-background dark:bg-gray-900 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-primary-light dark:text-white">
-            Welcome back, {user.name}!
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
-            Track your progress and stay updated with your courses
-          </p>
+        <div className="flex justify-between items-center mb-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-primary-light dark:text-white">
+              Welcome back, {user.name}!
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 mt-2">
+              Track your progress and stay updated with your courses
+            </p>
+          </div>
+          <Link href="/coursecreator" 
+          
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-light text-white hover:bg-primary transition-colors"
+          >Create Course</Link>
+            
         </div>
 
         {/* Edit Mode Toggle */}
