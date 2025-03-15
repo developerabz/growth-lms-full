@@ -83,7 +83,7 @@ export default function Dashboard() {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       setUser(user);
     }
-  }, []);
+  }, [router]);
 
   // Add reset handler
   const handleReset = () => {
@@ -205,8 +205,7 @@ export default function Dashboard() {
             </p>
           </div>
           <Link href="/coursecreator" 
-          
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-light text-white hover:bg-primary transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-light text-white hover:bg-primary-light hover:text-white transition-colors"
           >Create Course</Link>
             
         </div>
