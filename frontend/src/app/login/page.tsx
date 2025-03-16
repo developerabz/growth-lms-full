@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { API_ENDPOINTS } from '@/config/api';
 import { useRouter } from 'next/navigation';
 import { User } from '@/config/customtypes';
+import { AuthContext } from '@/app/layout';
+import { useContext } from 'react';
 
 // Zod schema for form validation
 const loginSchema = z.object({
@@ -25,6 +27,8 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
+  const { setLoggedIn } = useContext(AuthContext);
+
   const router = useRouter();
 
   const onSubmit = async (data: LoginFormData) => {
@@ -42,7 +46,6 @@ export default function LoginPage() {
     const res = await response.json();
     // console.log(res);
     localStorage.setItem('token', res.token);
-
     const userResponse = await fetch(API_ENDPOINTS.getUser(data.email));
     if (!userResponse.ok) {
       throw new Error('Failed to fetch user');
@@ -56,6 +59,7 @@ export default function LoginPage() {
       courseIds: user.courseIds,
     };
     localStorage.setItem('user', JSON.stringify(resUser));
+    setLoggedIn(true);
     router.push('/dashboard');
   };
 

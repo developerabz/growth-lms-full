@@ -1,21 +1,32 @@
 "use client"
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { AuthContext } from '@/app/layout';
+
 export default function Navbar() {
+  const { loggedIn, setLoggedIn } = useContext(AuthContext);
 
-  const [loggedIn, setLoggedIn] = useState(false);
-
-    useEffect(() => {
-      const isLoggedIn = localStorage.getItem('token') !== null;
-      if (!isLoggedIn) {
-        setLoggedIn(false)
-      } else {
-        setLoggedIn(true)
+  useEffect(() => {
+    if (!loggedIn) {
+      const tokenExists = localStorage.getItem('token') !== null;
+      if (tokenExists) {
+        setLoggedIn(true);
       }
-    }, []);
+    }
 
+  }, [loggedIn]);
+
+  const router = useRouter();
   //TODO: Add logout functionality
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setLoggedIn(false);
+    router.push("/login");
+  }
+  
 
 
   return (
@@ -28,18 +39,25 @@ export default function Navbar() {
             </Link>
           </div>
           <div className="flex space-x-4">
-            {loggedIn ? <Link
-              href="/logout"
+            {loggedIn && (
+              <button
+              onClick={handleLogout}
               className="text-white hover:bg-white hover:text-primary-light px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
               Logout
-            </Link>
-            : <Link
-              href="/login"
-              className="text-white hover:bg-white hover:text-primary-light px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            >
-              Login
-            </Link>}
+            </button>)}
+
+            {!loggedIn && (
+              <Link
+                href="/login"
+                className="text-white hover:bg-white hover:text-primary-light px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Login
+              </Link>
+            )}
+
+
+
             <Link
               href="/register"
               className="bg-white border-white border-2 text-primary-light hover:bg-primary-light hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
