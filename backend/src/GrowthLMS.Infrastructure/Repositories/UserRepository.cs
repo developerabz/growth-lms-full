@@ -108,6 +108,42 @@ namespace GrowthLMS.Infrastructure.Repositories
             }
         }
 
+        public async Task<ISimpleUser[]?> GetTeachersAsync()
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            _logger.LogInformation("Attempting to retrieve teachers");
+
+            var result = await connection.QueryAsync<dynamic>(
+                @"SELECT u.user_id as UserId, u.name as Name, u.email as Email
+                FROM users u
+                LEFT JOIN user_types ut ON u.user_id = ut.user_id
+                WHERE ut.user_type = 'Teacher'");
+
+
+            if (result == null)
+            {
+                ((ILogger)_logger).LogWarning("No teachers found");
+                return null;
+            }
+
+            List<SimpleUser> teachers = new List<SimpleUser>();
+            foreach (var teacher in result)
+            {
+                teachers.Add(new SimpleUser
+                {
+                    UserId = teacher.userid,
+                    Name = teacher.name,
+                    Email = teacher.email,
+
+                });
+            }
+
+            return teachers.ToArray();
+
+        }
+
+
+
         public async Task<bool> CreateUserAsync(IUser user, UserType userType, Guid? parentUserId = null)
         {
             using var connection = new NpgsqlConnection(_connectionString);
@@ -158,5 +194,7 @@ namespace GrowthLMS.Infrastructure.Repositories
                 throw;
             }
         }
+
+        
     }
 } 

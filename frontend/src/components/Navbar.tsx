@@ -19,7 +19,6 @@ export default function Navbar() {
   }, [loggedIn]);
 
   const router = useRouter();
-  //TODO: Add logout functionality
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');

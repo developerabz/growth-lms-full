@@ -23,6 +23,13 @@ namespace GrowthLMS.Core.Interfaces
         ICollection<UserType> UserTypes { get; set; }
     }
 
+    public interface ISimpleUser
+    {
+        Guid UserId { get; set; }
+        string Name { get; set; }
+        string Email { get; set; }
+    }
+
     public interface IParentUser
     {
         Guid UserId { get; set; }

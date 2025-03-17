@@ -6,5 +6,6 @@ namespace GrowthLMS.Core.Interfaces
         Task<bool> EmailExistsAsync(string email);
         Task<Guid?> GetUserIdByEmailAsync(string email);
         Task<IUser?> GetUserByEmailAsync(string email);
+        Task<ISimpleUser[]?> GetTeachersAsync();
     }
 } 

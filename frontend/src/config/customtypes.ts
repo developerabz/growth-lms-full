@@ -1,9 +1,10 @@
 
 export enum UserType {
-    ChildStudent,
+    Teacher,
     Parent,
     AdultStudent,
-    Teacher
+    Admin,
+    ChildStudent
 }
 
 export interface User {
@@ -14,5 +15,11 @@ export interface User {
     courseIds?: string[];
     parentId?: string;
     childIds?: string[];
+}
+
+export interface Course {
+    courseId: string;
+    name: string;
+    description: string;
 }
 

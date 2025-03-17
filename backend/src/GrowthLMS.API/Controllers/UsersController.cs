@@ -212,6 +212,75 @@ namespace GrowthLMS.API.Controllers
             }
         }
 
+        [HttpGet("teachers")]
+        public async Task<IActionResult> GetTeachers()
+        {
+            try
+            {
+                var teachers = await _userRepository.GetTeachersAsync();
+                if (teachers == null)
+                {
+                    return NotFound(new { message = "User not found" });
+                }
+
+                // Don't return sensitive information 
+
+                return Ok(teachers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving teachers");
+                return StatusCode(500, new { 
+                    message = "An error occurred while retrieving the user",
+                    error = ex.Message
+                });
+            }
+        }
+
+        [HttpPost("create-teacher")]
+        public async Task<IActionResult> CreateTeacher(UserRegistrationDto registration)
+        {
+            var user = new User
+            {
+                UserId = Guid.NewGuid(),    
+                Name = registration.FullName,
+                Email = registration.Email,
+                Salt = Convert.ToBase64String(GenerateSalt()),
+                Hash = Convert.ToBase64String(HashPassword(registration.Password, GenerateSalt())),
+                UserTypes = new List<UserType> { UserType.Teacher },
+                CourseIds = new List<Guid>()
+            };
+
+            var success = await _userRepository.CreateUserAsync(user, UserType.Teacher);
+            if (success)
+            {
+                return Ok(new { message = "Teacher created successfully" });
+            }
+            return BadRequest(new { message = "Failed to create teacher" });
+        }
+
+        [HttpPost("create-admin")]  
+        public async Task<IActionResult> CreateAdmin(UserRegistrationDto registration)
+        {
+            var user = new User
+            {
+                UserId = Guid.NewGuid(),
+                Name = registration.FullName,
+                Email = registration.Email,
+                Salt = Convert.ToBase64String(GenerateSalt()),
+                Hash = Convert.ToBase64String(HashPassword(registration.Password, GenerateSalt())),
+                UserTypes = new List<UserType> { UserType.Admin },
+                CourseIds = new List<Guid>()
+            };
+
+            var success = await _userRepository.CreateUserAsync(user, UserType.Admin);
+            if (success)
+            {
+                return Ok(new { message = "Admin created successfully" });
+            }
+            return BadRequest(new { message = "Failed to create admin" });
+        }
+
         private byte[] GenerateSalt()
         {
             var salt = new byte[16];
@@ -230,4 +299,6 @@ namespace GrowthLMS.API.Controllers
             }
         }
     }
+
+
 } 
