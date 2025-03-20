@@ -37,6 +37,9 @@ CREATE TABLE courses (
     description TEXT,
     level VARCHAR(50) NOT NULL,
     teacher_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT,
+    price DECIMAL(10, 2) NOT NULL,
+    duration INT NOT NULL,
+    subject VARCHAR(255) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );

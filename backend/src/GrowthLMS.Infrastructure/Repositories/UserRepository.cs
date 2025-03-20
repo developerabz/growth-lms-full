@@ -195,6 +195,30 @@ namespace GrowthLMS.Infrastructure.Repositories
             }
         }
 
+        public async Task<bool> CreateCourseAsync(ICourse course)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            try
+            {
+                await connection.ExecuteAsync(
+                    @"INSERT INTO courses (course_id, name, description, price, level, duration, subject, teacher_id) 
+                    VALUES (@Id, @Name, @Description, @Price, @Level, @Duration, @Subject, @TeacherId)",
+                    course,
+                    transaction);
+
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
         
     }
 } 

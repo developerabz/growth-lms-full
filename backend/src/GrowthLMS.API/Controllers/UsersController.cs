@@ -281,6 +281,29 @@ namespace GrowthLMS.API.Controllers
             return BadRequest(new { message = "Failed to create admin" });
         }
 
+        [HttpPost("create-course")]
+        public async Task<IActionResult> CreateCourse(CourseCreateDto courseCreation)
+        {
+            var course = new Course
+            {
+                Id = Guid.NewGuid(),
+                Name = courseCreation.Name,
+                Description = courseCreation.Description,
+                Price = courseCreation.Price,
+                Duration = courseCreation.Duration, 
+                Subject = courseCreation.Subject,
+                Level = courseCreation.Level,
+                TeacherId = Guid.Parse(courseCreation.TeacherId)
+            };
+
+            var success = await _userRepository.CreateCourseAsync(course);
+            if (success)
+            {
+                return Ok(new { message = "Course created successfully" });
+            }
+            return BadRequest(new { message = "Failed to create course" });
+        } 
+
         private byte[] GenerateSalt()
         {
             var salt = new byte[16];

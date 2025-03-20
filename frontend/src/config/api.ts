@@ -6,5 +6,7 @@ export const API_ENDPOINTS = {
   register: '/api/users/register',
   login: '/api/users/login',
   getUser: (email: string) => `/api/users/by-email/${email}`,
+  getTeachers: '/api/users/teachers',
+  createCourse: '/api/users/create-course',
   // Add other endpoints as needed
 }; 

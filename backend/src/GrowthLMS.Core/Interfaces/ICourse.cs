@@ -9,6 +9,9 @@ namespace GrowthLMS.Core.Interfaces
         string Description { get; set; }
         string Level { get; set; }
         Guid TeacherId { get; set; }
+        decimal Price { get; set; }
+        int Duration { get; set; }
+        string Subject { get; set; }
     }
 
     public interface IAnnouncement

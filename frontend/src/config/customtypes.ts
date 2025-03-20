@@ -21,5 +21,10 @@ export interface Course {
     courseId: string;
     name: string;
     description: string;
+    price: number;
+    duration: number;
+    level: string;
+    subject: string;
+    teacherId: string;
 }
 
