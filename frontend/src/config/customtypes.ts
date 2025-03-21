@@ -28,3 +28,7 @@ export interface Course {
     teacherId: string;
 }
 
+export interface EnrolledCourse extends Course {
+    progress: number;
+}
+

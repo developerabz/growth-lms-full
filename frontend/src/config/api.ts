@@ -8,5 +8,9 @@ export const API_ENDPOINTS = {
   getUser: (email: string) => `/api/users/by-email/${email}`,
   getTeachers: '/api/users/teachers',
   createCourse: '/api/users/create-course',
+  getAllCourses: '/api/users/all-courses',
+  enrolUserInCourse: '/api/users/enrol-user-in-course',
+  getEnrolmentsForUser: (userId: string) => `/api/users/enrolments-for-user/${userId}`,
+  getEnrolmentsForTeacher: (teacherId: string) => `/api/users/enrolments-for-teacher/${teacherId}`,
   // Add other endpoints as needed
 }; 

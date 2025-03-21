@@ -304,6 +304,41 @@ namespace GrowthLMS.API.Controllers
             return BadRequest(new { message = "Failed to create course" });
         } 
 
+        [HttpPost("enrol-user-in-course")]
+        public async Task<IActionResult> EnrolUserInCourse(EnrolUserInCourseDto enrolment)
+        {
+            var success = await _userRepository.EnrolUserInCourseAsync(enrolment.UserId, enrolment.CourseId);
+            if (success)
+            {
+                return Ok(new { message = "User enrolled in course successfully" });
+            }
+            return BadRequest(new { message = "Failed to enrol user in course" });
+        }
+
+        [HttpGet("enrolments-for-user/{userId}")]
+        public async Task<IActionResult> GetEnrolmentsForUser(Guid userId)
+        {
+            Console.WriteLine(userId);
+            var enrolments = await _userRepository.GetEnrollmentsForUserIdAsync(userId);
+            Console.WriteLine(enrolments);
+            return Ok(enrolments);
+        }
+
+        [HttpGet("enrolments-for-teacher/{teacherId}")]
+        public async Task<IActionResult> GetEnrolmentsForTeacher(Guid teacherId)
+        {
+            var enrolments = await _userRepository.GetCoursesForTeacherIdAsync(teacherId);
+            return Ok(enrolments);
+        }
+
+        [HttpGet("all-courses")]
+        public async Task<IActionResult> GetAllCourses()
+        {
+            var courses = await _userRepository.GetAllCoursesAsync();
+            return Ok(courses);
+        }
+        
+
         private byte[] GenerateSalt()
         {
             var salt = new byte[16];

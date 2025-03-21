@@ -48,6 +48,7 @@ CREATE TABLE courses (
 CREATE TABLE user_courses (
     user_id UUID REFERENCES users(user_id) ON DELETE CASCADE,
     course_id UUID REFERENCES courses(course_id) ON DELETE CASCADE,
+    progress DECIMAL(5,2) NOT NULL CHECK (progress >= 0 AND progress <= 100),
     PRIMARY KEY (user_id, course_id)
 );
 
@@ -62,16 +63,6 @@ CREATE TABLE announcements (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create Progress table
-CREATE TABLE progress (
-    progress_id UUID PRIMARY KEY,
-    amount DECIMAL(5,2) NOT NULL CHECK (amount >= 0 AND amount <= 100),
-    course_id UUID NOT NULL REFERENCES courses(course_id) ON DELETE CASCADE,
-    student_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (course_id, student_id)
-);
 
 -- Create indexes for foreign keys and commonly queried fields
 CREATE INDEX idx_users_email ON users(email);
@@ -79,8 +70,6 @@ CREATE INDEX idx_child_students_parent ON child_student_users(parent_user_id);
 CREATE INDEX idx_courses_teacher ON courses(teacher_id);
 CREATE INDEX idx_announcements_course ON announcements(course_id);
 CREATE INDEX idx_announcements_author ON announcements(author_id);
-CREATE INDEX idx_progress_course ON progress(course_id);
-CREATE INDEX idx_progress_student ON progress(student_id);
 
 -- Create trigger function for updating timestamps
 CREATE OR REPLACE FUNCTION update_timestamp()
@@ -107,7 +96,16 @@ CREATE TRIGGER update_announcements_timestamp
     FOR EACH ROW
     EXECUTE FUNCTION update_timestamp();
 
-CREATE TRIGGER update_progress_timestamp
-    BEFORE UPDATE ON progress
-    FOR EACH ROW
-    EXECUTE FUNCTION update_timestamp(); 
+
+
+
+
+
+
+
+
+
+
+
+
+

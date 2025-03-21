@@ -219,6 +219,161 @@ namespace GrowthLMS.Infrastructure.Repositories
             }
         }
 
+
+        public async Task<ICourse[]> GetAllCoursesAsync()
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            var result = await connection.QueryAsync<dynamic>(
+                @"SELECT * FROM courses");
+
+            
+
+            if (result.Count() == 0)
+            {
+                return new Course[] { };
+            }
+
+            return result.Select(c => new Course
+            {
+                Id = c.course_id,
+                Name = c.name,
+                Description = c.description,
+                Price = c.price,
+                Level = c.level,
+                Duration = c.duration,
+                Subject = c.subject,
+                TeacherId = c.teacher_id
+            }).ToArray();
+        }
+
         
+
+        public async Task<ICourse[]> GetCoursesForTeacherIdAsync(Guid teacherId)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            var result = await connection.QueryAsync<dynamic>(
+                @"SELECT * FROM courses WHERE teacher_id = @TeacherId",    
+                new { TeacherId = teacherId });
+
+            return result.Select(c => new Course
+            {
+                Id = c.course_id,
+                Name = c.name,
+                Description = c.description,
+                Price = c.price,
+                Level = c.level,
+                Duration = c.duration,
+                Subject = c.subject,
+                TeacherId = c.teacher_id
+            }).ToArray();   
+        }
+
+        public async Task<bool> UpdateCourseAsync(ICourse course)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            try
+            {
+                await connection.ExecuteAsync(
+                    @"UPDATE courses SET name = @Name, description = @Description, price = @Price, level = @Level, duration = @Duration, subject = @Subject, teacher_id = @TeacherId
+                    WHERE course_id = @Id",
+                    course,
+                    transaction);
+
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+        
+
+        public async Task<bool> DeleteCourseAsync(Guid courseId)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            using var transaction = await connection.BeginTransactionAsync();  
+
+            try
+            {
+                await connection.ExecuteAsync(
+                    @"DELETE FROM courses WHERE course_id = @Id",
+                    new { Id = courseId },
+                    transaction);
+
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
+        public async Task<bool> EnrolUserInCourseAsync(Guid userId, Guid courseId)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            using var transaction = await connection.BeginTransactionAsync();
+
+            try
+            {
+                await connection.ExecuteAsync(
+                    @"INSERT INTO user_courses (user_id, course_id, progress)
+                    VALUES (@UserId, @CourseId, 12)",
+                    new { UserId = userId, CourseId = courseId },
+                    transaction);
+
+                await transaction.CommitAsync();
+                return true;
+            }
+            catch  
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }       
+
+        public async Task<IEnrolledCourse[]> GetEnrollmentsForUserIdAsync(Guid userId)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            Console.WriteLine(userId);
+            var result = await connection.QueryAsync<dynamic>(
+                @"SELECT c.course_id, c.name, c.description, c.price, c.level, c.duration, c.subject, c.teacher_id, uc.progress FROM courses c
+                JOIN user_courses uc ON c.course_id = uc.course_id
+                WHERE uc.user_id = @UserId",
+                new { UserId = userId });
+            Console.WriteLine(result);
+
+            if (result.Count() == 0)
+            {
+                return new EnrolledCourse[] { };
+            }
+
+            return result.Select(e => new EnrolledCourse
+            {
+                Id = e.course_id,
+                Name = e.name,
+                Description = e.description,
+                Price = e.price,
+                Level = e.level,
+                Duration = e.duration,
+                Subject = e.subject,
+                TeacherId = e.teacher_id,
+                Progress = e.progress
+            }).ToArray();
+        }
+
+        //TODO: add method to get all enrolments for a course 
+            
     }
 } 

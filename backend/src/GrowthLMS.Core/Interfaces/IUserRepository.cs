@@ -8,5 +8,11 @@ namespace GrowthLMS.Core.Interfaces
         Task<IUser?> GetUserByEmailAsync(string email);
         Task<ISimpleUser[]?> GetTeachersAsync();
         Task<bool> CreateCourseAsync(ICourse course);
+        Task<ICourse[]> GetAllCoursesAsync();
+        Task<ICourse[]> GetCoursesForTeacherIdAsync(Guid teacherId);
+        Task<bool> UpdateCourseAsync(ICourse course);
+        Task<bool> DeleteCourseAsync(Guid courseId);
+        Task<bool> EnrolUserInCourseAsync(Guid userId, Guid courseId);
+        Task<IEnrolledCourse[]> GetEnrollmentsForUserIdAsync(Guid userId);
     }
 } 

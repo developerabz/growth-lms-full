@@ -8,8 +8,8 @@ import CourseCard from '@/components/CourseCard';
 import NotificationCard from '@/components/NotificationCard';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { useRouter } from 'next/navigation';
-import { User } from '@/config/customtypes';
-
+import { User, Course, EnrolledCourse } from '@/config/customtypes';
+import { API_ENDPOINTS } from '@/config/api';
 // Define section types
 type SectionType = 'enrolled' | 'completed' | 'notifications' | 'all';
 
@@ -67,8 +67,9 @@ export default function Dashboard() {
     userTypes: [],
     courseIds: [],
   });
-
-  const allCourses = [...mockEnrolledCourses, ...mockCompletedCourses];
+  const [allCourses, setAllCourses] = useState<Course[]>([]);
+  const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
+  const [completedCourses, setCompletedCourses] = useState<EnrolledCourse[]>([]);
   const filteredCourses = allCourses.filter(course =>
     course.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -77,14 +78,35 @@ export default function Dashboard() {
 
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('token') !== null;
+    console.log(isLoggedIn);
     if (!isLoggedIn) {
       router.push('/login');
-    } else {
+    } else if (user.userId === '') {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
       setUser(user);
+    } else {
+      getAllCourses();
+      getEnrolledCourses();
     }
-  }, [router]);
+  }, [router, user]);
 
+  const getAllCourses = async () => {
+    const response = await fetch(API_ENDPOINTS.getAllCourses);
+    const data = await response.json();
+    console.log(data);
+    setAllCourses(data);
+
+  }
+
+  const getEnrolledCourses = async () => {
+    console.log(user.userId);
+    const response = await fetch(API_ENDPOINTS.getEnrolmentsForUser(user.userId));
+    const data = await response.json();
+    console.log(data);
+    setEnrolledCourses(data);
+    const completedCourses = data.filter((course: EnrolledCourse) => course.progress === 100);
+    setCompletedCourses(completedCourses);
+  }
   // Add reset handler
   const handleReset = () => {
     setSections(DEFAULT_SECTIONS);
@@ -126,8 +148,8 @@ export default function Dashboard() {
                 <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredCourses.map(course => (
-                  <CourseCard key={course.id} {...course} />
+                {filteredCourses.map((course: Course, index: number) => (
+                  <CourseCard key={index} {...course} />
                 ))}
               </div>
             </section>
@@ -149,8 +171,8 @@ export default function Dashboard() {
                 </Link>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                {mockEnrolledCourses.map(course => (
-                  <CourseCard key={course.id} {...course} />
+                {enrolledCourses.map((course: EnrolledCourse, index: number) => (
+                  <CourseCard key={index} {...course} />
                 ))}
               </div>
             </section>
@@ -164,8 +186,8 @@ export default function Dashboard() {
                 {section.title}
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
-                {mockCompletedCourses.map(course => (
-                  <CourseCard key={course.id} {...course} isCompleted />
+                {completedCourses.map((course: EnrolledCourse, index: number) => (
+                  <CourseCard key={index} {...course} isCompleted />
                 ))}
               </div>
             </section>
