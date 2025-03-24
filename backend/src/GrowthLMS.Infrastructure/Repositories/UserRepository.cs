@@ -293,6 +293,50 @@ namespace GrowthLMS.Infrastructure.Repositories
                 throw;
             }
         }
+
+        public async Task<ICourse?> GetCourseAsync(Guid courseId)
+        {
+            using var connection = new NpgsqlConnection(_connectionString);
+            await connection.OpenAsync();
+            using var transaction = await connection.BeginTransactionAsync();  
+
+            try
+            {
+
+                var result = await connection.QueryFirstOrDefaultAsync<dynamic>(
+                    @"SELECT course_id, name, description, level, teacher_id, price, duration, subject
+                    FROM courses WHERE course_id = @Id",
+                    new { Id = courseId });
+
+                if (result == null)
+                {
+                    ((ILogger)_logger).LogWarning("No course found with id: {Id}", courseId);
+                    return null;
+                }
+
+
+                var course = new Course
+                {
+                  Id = result.course_id,
+                  Name = result.name,
+                  Description = result.description,
+                  Price = result.price,
+                  Level = result.level,
+                  Duration = result.duration,
+                  Subject = result.subject,
+                  TeacherId = result.teacher_id
+
+                };
+
+
+
+                return course;
+            }
+            catch
+            {
+                throw;
+            }
+        }
         
 
         public async Task<bool> DeleteCourseAsync(Guid courseId)

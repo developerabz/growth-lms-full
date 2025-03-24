@@ -337,6 +337,10 @@ namespace GrowthLMS.API.Controllers
             var courses = await _userRepository.GetAllCoursesAsync();
             return Ok(courses);
         }
+
+        //TODO: Add get course by id
+
+
         
 
         private byte[] GenerateSalt()
