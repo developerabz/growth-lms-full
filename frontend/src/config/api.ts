@@ -1,4 +1,4 @@
-export const API_BASE_URL = process.env.NODE_ENV === 'development' 
+export const API_BASE_URL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:5279'  // Use HTTP in development to avoid certificate issues
   : 'https://localhost:7279'; // Use HTTPS in production
 
@@ -12,5 +12,7 @@ export const API_ENDPOINTS = {
   enrolUserInCourse: '/api/users/enrol-user-in-course',
   getEnrolmentsForUser: (userId: string) => `/api/users/enrolments-for-user/${userId}`,
   getEnrolmentsForTeacher: (teacherId: string) => `/api/users/enrolments-for-teacher/${teacherId}`,
+  getCourse: (courseId: string) => `/api/users/courses/${courseId}`,
   // Add other endpoints as needed
+
 }; 

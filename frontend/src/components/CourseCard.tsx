@@ -5,20 +5,21 @@ import Link from 'next/link';
 import { MoreVertical } from 'lucide-react';
 
 interface CourseCardProps {
-  courseId: string;
+  id: string;
   name: string;
   progress?: number;
   isCompleted?: boolean;
 }
 
 const CourseCard: FC<CourseCardProps> = ({
-  courseId,
+  id,
   name,
   progress = 0,
   isCompleted = false,
 }) => {
+  console.log(id)
   return (
-    <Link href={`/courses/${courseId}`} className="block">
+    <Link href={`/courses/${id}`} className="block">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow border border-gray-200 dark:border-gray-700">
         <div className="flex justify-between items-start">
           <div>
@@ -30,7 +31,7 @@ const CourseCard: FC<CourseCardProps> = ({
             <MoreVertical className="h-5 w-5" />
           </button>
         </div>
-        
+
         {!isCompleted && (
           <div className="mt-4">
             <div className="flex justify-between text-sm mb-1">
