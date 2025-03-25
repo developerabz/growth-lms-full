@@ -338,7 +338,22 @@ namespace GrowthLMS.API.Controllers
             return Ok(courses);
         }
 
-        //TODO: Add get course by id
+        [HttpGet("courses/{courseId}")]
+        public async Task<IActionResult> GetCourseById(Guid courseId)
+        {
+
+
+          var course = await _userRepository.GetCourseAsync(courseId);
+
+          if (course == null) {
+            return NotFound(new {message = "Course not found"});
+          }
+
+          return Ok(course);
+
+        }
+        
+
 
 
         

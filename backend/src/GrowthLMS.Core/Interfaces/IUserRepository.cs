@@ -14,6 +14,6 @@ namespace GrowthLMS.Core.Interfaces
         Task<bool> DeleteCourseAsync(Guid courseId);
         Task<bool> EnrolUserInCourseAsync(Guid userId, Guid courseId);
         Task<IEnrolledCourse[]> GetEnrollmentsForUserIdAsync(Guid userId);
-        //TODO: add get course by id
+        Task<ICourse?> GetCourseAsync(Guid courseId);
     }
 } 
