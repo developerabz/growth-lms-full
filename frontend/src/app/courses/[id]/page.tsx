@@ -1,10 +1,25 @@
 "use client"
-import { Course } from "@/config/customtypes";
+import { Announcement, Course } from "@/config/customtypes";
 import { API_ENDPOINTS } from "@/config/api";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
 
+const mockAnnouncements: Announcement[] = [
+  {
+    id: "1",
+    name: "First Announcement",
+    description: "This is the first Announcement",
+    comments: ["commmentid", "commendt2"]
+  },
+  {
+    id: "2",
+    name: "Second Announcement",
+    description: "This is the second Announcement",
+    comments: ["commmentid1", "commendt3"]
+  },
+
+];
 
 export default function CoursePage() {
   const params = useParams()
@@ -53,10 +68,19 @@ export default function CoursePage() {
   //- editable is course title and description
   //- editable is the teacher
   //- ...and more
+  //
+  //
+  //TODO: next 5 minutes, create announcements card
   return (
     <div className="bg-background min-h-screen dark:bg-gray-900 p-8">
       <h1 className="font-bold">{course?.name}</h1>
       <p>{course?.description}</p>
+      <div>
+        {mockAnnouncements.map((a, i) => {
+          return <div key={i}>{a.name}</div>
+        })}
+      </div>
+
 
     </div>
   );

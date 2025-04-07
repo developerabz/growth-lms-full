@@ -32,3 +32,11 @@ export interface EnrolledCourse extends Course {
   progress: number;
 }
 
+export interface Announcement {
+  id: string;
+  name: string;
+  description: string;
+  comments: string[];
+
+}
+
