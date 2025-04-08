@@ -35,8 +35,9 @@ export interface EnrolledCourse extends Course {
 export interface Announcement {
   id: string;
   name: string;
-  description: string;
+  details: string;
   comments: string[];
-
+  authorId: string;
+  courseId: string;
 }
 

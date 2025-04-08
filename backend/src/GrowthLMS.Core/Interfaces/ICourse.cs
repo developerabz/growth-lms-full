@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace GrowthLMS.Core.Interfaces
 {
@@ -27,6 +28,16 @@ namespace GrowthLMS.Core.Interfaces
         decimal Progress { get; set; }
     }
 
+    public interface IComment
+    {
+
+        Guid Id { get; set; }
+        string Name { get; set; }
+        string Description { get; set; }
+        Guid AnnouncementId { get; set; }
+        Guid AuthorId { get; set; }
+    }
+
     public interface IAnnouncement
     {
         Guid Id { get; set; }
@@ -34,5 +45,6 @@ namespace GrowthLMS.Core.Interfaces
         string Details { get; set; }
         Guid AuthorId { get; set; }
         Guid CourseId { get; set; }
+        ICollection<IComment> Comments { get; set; }
     }
 } 

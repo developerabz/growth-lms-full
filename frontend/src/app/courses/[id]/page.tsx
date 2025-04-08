@@ -9,14 +9,18 @@ const mockAnnouncements: Announcement[] = [
   {
     id: "1",
     name: "First Announcement",
-    description: "This is the first Announcement",
-    comments: ["commmentid", "commendt2"]
+    details: "This is the first Announcement",
+    comments: ["commmentid", "commendt2"],
+    authorId: "3",
+    courseId: "7"
   },
   {
     id: "2",
     name: "Second Announcement",
-    description: "This is the second Announcement",
-    comments: ["commmentid1", "commendt3"]
+    details: "This is the second Announcement",
+    comments: ["commmentid1", "commendt3"],
+    authorId: "3",
+    courseId: "7"
   },
 
 ];
@@ -60,7 +64,7 @@ export default function CoursePage() {
   //- Coutse title and description 
   //- Announcements card section 
   //- Course resources cards section 
-  //- Assessments resources card section 
+  //- As` sessments resources card section 
   //- Course chat card section
   //- Quizzes card section
   //- Edit button (for admin/teacher users only)
@@ -76,6 +80,7 @@ export default function CoursePage() {
       <h1 className="font-bold">{course?.name}</h1>
       <p>{course?.description}</p>
       <div>
+
         {mockAnnouncements.map((a, i) => {
           return <div key={i}>{a.name}</div>
         })}
